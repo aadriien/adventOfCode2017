@@ -4,6 +4,8 @@
 ##  Day 3 - Spiral Memory                                                    ##
 ###############################################################################
 
+from collections import defaultdict
+
 
 INPUT_FILE = "day3-input.txt"
 
@@ -53,12 +55,68 @@ def calculate_steps(starting_square: int) -> int:
     return layer + min_dist_to_center
 
 
+# Part 2 of problem
+def get_larger_value(starting_square: int) -> int:
+    # NOTES:
+    # - up to 8 adjacent squares to sum (if already filled)
+    # - can map grid position to adjacent sum value
+    # - same pattern of right > up > left > down
+    # - number of steps to take by direction (adding new square):
+    #   - right or up: 1 step
+    #   - left or down: 2 steps
+
+    directions = [
+        (1, 0), # right
+        (0, 1), # up
+        (-1, 0), # left
+        (0, -1) # down
+    ]
+
+    # Instead of position, focus on how to access from center (0, 0)
+    adjacent_steps_from_center = [
+        (-1, 1), (0, 1), (1, 1), # reach top row (left, center right)
+        (-1, 0), (1, 0), # middle row
+        (-1, -1), (0, -1), (1, -1) # bottom row
+    ]
+
+    spiral_grid = defaultdict(int)
+    x, y = 0, 0
+    spiral_grid[(x, y)] = 1
+
+    # Track distance to reach square (e.g. 1 step for right vs 2 for left)
+    step_offset = 1
+
+    while True:
+        for dir_x, dir_y in directions:
+            # Determine steps to take based on layer from center
+            for i in range(step_offset):
+                x += dir_x
+                y += dir_y
+
+                # Max of 8 possible neighbors
+                adjacent_sum = 0
+                for adj_x, adj_y in adjacent_steps_from_center:
+                    neighbor_x, neighbor_y = x + adj_x, y + adj_y
+                    adjacent_sum += spiral_grid[(neighbor_x, neighbor_y)]
+
+                # Key as coordinates, value as adjacent sum
+                spiral_grid[(x, y)] = adjacent_sum
+
+                # Break out as soon as we pass target
+                if adjacent_sum > starting_square:
+                    return adjacent_sum
+
+            if dir_x == 0:
+                step_offset += 1
+
+
 
 if __name__ == "__main__":
     starting_square = read_file(filename=INPUT_FILE)
 
     steps = calculate_steps(starting_square=starting_square)
+    larger_val = get_larger_value(starting_square=starting_square)
 
 
-    print(f"steps: {steps}")
+    print(f"steps: {steps} ... larger value: {larger_val}")
 
