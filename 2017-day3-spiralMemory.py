@@ -28,10 +28,14 @@ def calculate_steps(starting_square: int) -> int:
     
     # APPROACH:
     # - treat (0, 0) access port as layer 0
-    #   - length of side for any given layer == (2 * n) + 1
+    #   - length of side for any given layer n == 2 * n
     #       - halfway point of side length aligns with 0 of access port..
     #       - so can gauge x/y offset from 0 based on layer position
-    #   - max number (bottom right) for any given layer == ((2 * n) + 1) ^ 2
+    #   - max number (bottom right) for any given layer n == ((2 * n) + 1) ^ 2
+
+    # Handle case of center square
+    if starting_square == 1:
+        return 0
 
     # Find layer we're currently in
     layer = 0
@@ -39,20 +43,14 @@ def calculate_steps(starting_square: int) -> int:
         layer += 1
 
     # Then determine offset in layer
-    base_val = (((2 * (layer - 1)) + 1) ** 2) + 1 # start from prev layer's end
-    offset = starting_square - base_val
-    side_len, halfway = 2 * layer, (2 * layer) // 2 # subtract 1 since spiral 
+    max_val = (2 * layer + 1) ** 2
+    side_len = 2 * layer
 
-    # Determine x, y coordinate based on position in layer
-    if offset < side_len: # right edge
-        x, y = side_len - offset, -halfway + offset + 1
-    elif offset < side_len * 2: # top edge
-        x, y = side_len - offset + 1, 0
-    elif offset < side_len * 3: # left edge
-        pass
-    else: # bottom edge
-        pass
+    # Find min distance to midpoints / centers of any side
+    side_centers = [max_val - (side_len // 2) - side_len * i for i in range(4)]
+    min_dist_to_center = min(abs(starting_square - center) for center in side_centers)
 
+    return layer + min_dist_to_center
 
 
 
