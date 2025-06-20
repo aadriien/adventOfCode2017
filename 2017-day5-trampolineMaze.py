@@ -23,6 +23,7 @@ def jump_steps(nums: list[int], part: int) -> int:
     while 0 <= curr_index <= max_index:
         jump_distance = nums[curr_index]
 
+        # Handle part 2 of problem
         if (part == 2 and jump_distance >= 3):
             nums[curr_index] -= 1
         else:
