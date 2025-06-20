@@ -110,7 +110,6 @@ def get_larger_value(starting_square: int) -> int:
                 step_offset += 1
 
 
-
 if __name__ == "__main__":
     starting_square = read_file(filename=INPUT_FILE)
 
