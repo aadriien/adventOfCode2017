@@ -21,20 +21,22 @@ def read_file(filename: str) -> Node:
     # Start with placeholder head to hold tower programs
     root = Node("null", 0)
 
-    # Example input lines: 
-        # pbga (66)
-        # fwft (72) -> ktlj, cntj, xhth
-    pattern = r"^\s*(\w+)\s*\(\s*(\d+)\s*\)\s*->\s*(.*)$"
-
     with open(filename, "r") as input:
         for line in input:
-            match = re.search(pattern, line)
+            # Example input lines: 
+                # pbga (66)
+                # fwft (72) -> ktlj, cntj, xhth
+            input_parts = line.split("->")
+            consistent = input_parts[0].strip()
+            remaining = input_parts[1] if len(input_parts) > 1 else ""
+
+            match = re.search(r"(\w+)\s*\((\d+)\)", consistent)
 
             # Parse str input to build node (with children array, if exists)
             if match:
                 name = match.group(1)
                 weight = int(match.group(2))
-                children = match.group(3).split()
+                children = remaining.split()
 
                 print(f"name: {name}, weight: {weight}, children: {children}")
                 
@@ -53,5 +55,6 @@ def find_bottom(root_placeholder: Node) -> str:
 if __name__ == "__main__":
     root_placeholder = read_file(filename=INPUT_FILE)
 
+    bottom = find_bottom(root_placeholder=root_placeholder)
 
 
