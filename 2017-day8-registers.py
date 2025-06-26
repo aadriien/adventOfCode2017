@@ -45,11 +45,12 @@ def parse_instruction(instruction: str) -> dict:
     }
 
 
-def get_largest_value(instructions: list[str]) -> int:
+def get_largest_value(instructions: list[str]) -> tuple[int, int]:
     # Parse each str into usable command
     parsed = [parse_instruction(instruction) for instruction in instructions]
 
     register_values = defaultdict(int)
+    highest_ever = float('-inf')
 
     for command in parsed:
         reg_check = command["conditional"]["register_check"]
@@ -64,14 +65,16 @@ def get_largest_value(instructions: list[str]) -> int:
 
             register_values[reg] += amnt if act == "inc" else -amnt
 
-    return max(register_values.values())
+            # Update record of highest ever value if applicable (for part 2)
+            highest_ever = max(highest_ever, register_values[reg])
+
+    return max(register_values.values()), highest_ever
 
 
 if __name__ == "__main__":
     instructions = read_file(filename=INPUT_FILE)
 
-    largest_value = get_largest_value(instructions=instructions)
+    largest_value, highest_ever = get_largest_value(instructions=instructions)
 
-
-    print(f"largest value: {largest_value}")
+    print(f"largest value: {largest_value} ... highest ever: {highest_ever}")
 

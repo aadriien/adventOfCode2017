@@ -70,7 +70,7 @@ def find_bottom(programs: dict) -> str:
 # Part 2 of problem
 def find_weight(programs: dict, bottom_name: str) -> int:
     # Helper function to get program's total weight (stacked tower)
-    def check_weights(node: Node) -> int:
+    def check_weights(node: Node) -> tuple[int, int]:
         if not node.children:
             return node.weight, None
 
