@@ -6,6 +6,7 @@
 
 
 import re 
+from collections import Counter
 
 INPUT_FILE = "day7-input.txt"
 
@@ -38,7 +39,7 @@ def read_file(filename: str) -> dict:
             if match:
                 name = match.group(1)
                 weight = int(match.group(2))
-
+                
                 children_names = [name.strip() for name in remaining.split(",")] if remaining else []
                 
                 # Map program name to node object for easy lookup later
@@ -48,6 +49,7 @@ def read_file(filename: str) -> dict:
         return programs
 
 
+# Part 1 of problem
 def find_bottom(programs: dict) -> str:
     # Connect str children names to actual node objects
     for node in programs.values():
@@ -65,10 +67,50 @@ def find_bottom(programs: dict) -> str:
     return not_child
 
 
+# Part 2 of problem
+def find_weight(programs: dict, bottom_name: str) -> int:
+    # Helper function to get program's total weight (stacked tower)
+    def check_weights(node: Node) -> int:
+        if not node.children:
+            return node.weight, None
+
+        children_weights = [check_weights(child) for child in node.children]
+
+        for total_weight, fix in children_weights:
+            if fix is not None:
+                return 0, fix
+
+        child_weights = [weight for weight, _ in children_weights]
+
+        # Check for consistent weights
+        if len(set(child_weights)) > 1:
+            weight_counts = Counter(child_weights)
+
+            # We know there's an imbalance, so now determine which one
+            correct_weight = [w for w in weight_counts if weight_counts[w] > 1][0]
+            wrong_weight = [w for w in weight_counts if weight_counts[w] == 1][0]
+
+            for i in range(len(node.children)):
+                if child_weights[i] == wrong_weight:
+                    # Determine difference from wrong child 
+                    wrong_child = node.children[i]
+                    diff = correct_weight - wrong_weight
+
+                    fixed_weight = wrong_child.weight + diff
+                    return 0, fixed_weight 
+
+        return node.weight + sum(child_weights), None
+
+    bottom_node = programs[bottom_name]
+    total, fix = check_weights(bottom_node)
+    return fix
+        
+
 if __name__ == "__main__":
     programs = read_file(filename=INPUT_FILE)
 
     bottom = find_bottom(programs=programs)
+    fixed_weight = find_weight(programs=programs, bottom_name=bottom)
 
-    print(f"bottom program: {bottom}")
+    print(f"bottom program: {bottom} ... balanced weight: {fixed_weight}")
 
