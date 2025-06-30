@@ -31,14 +31,11 @@ def calculate_score(stream: str) -> int:
         if delete_next: delete_next = False
 
         else:
-            if chr == "<":
-                garbage = True
+            if chr == "<": garbage = True
 
-            elif chr == "!":
-                delete_next = True
+            elif chr == "!": delete_next = True
             
-            elif chr == ">":
-                garbage = False
+            elif chr == ">": garbage = False
 
             elif chr == "{":
                 if not garbage:
@@ -52,7 +49,21 @@ def calculate_score(stream: str) -> int:
     return total_score
 
 
+# Validate examples with unit tests
+def run_tests() -> None:
+    assert (calculate_score("{}") == 1)
+    assert (calculate_score("{{{}}}") == 6)
+    assert (calculate_score("{{},{}}") == 5)
+    assert (calculate_score("{{{},{},{{}}}}") == 16)
+    assert (calculate_score("{<a>,<a>,<a>,<a>}") == 1)
+    assert (calculate_score("{{<ab>},{<ab>},{<ab>},{<ab>}}") == 9)
+    assert (calculate_score("{{<!!>},{<!!>},{<!!>},{<!!>}}") == 9)
+    assert (calculate_score("{{<a!>},{<a!>},{<a!>},{<ab>}}") == 3)
+
+
 if __name__ == "__main__":
+    run_tests()
+    
     stream_str = read_file(filename=INPUT_FILE)
 
     score = calculate_score(stream=stream_str)
