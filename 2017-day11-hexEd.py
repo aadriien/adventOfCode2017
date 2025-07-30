@@ -15,6 +15,7 @@ def read_file(filename: str) -> list[str]:
 
 
 def calculate_distance(origin: tuple[int, int], dest: tuple[int, int]) -> int:
+    # Axial distance for hex grid
     o_row, o_col = origin
     d_row, d_col = dest
 
@@ -25,9 +26,10 @@ def calculate_distance(origin: tuple[int, int], dest: tuple[int, int]) -> int:
     ) / 2
 
 
-def min_steps(path: list[str]) -> int:
-    # Based on hex grids, view through lens of rows x columns 
+def calculate_steps(path: list[str], part: int) -> int:
+    # Based on hex grid, view through lens of rows x columns 
     row, col = 0, 0
+    max_dist = 0
 
     for dir in path:
         match dir:
@@ -47,19 +49,19 @@ def min_steps(path: list[str]) -> int:
             case "nw":
                 col -= 1
 
-    return calculate_distance([0, 0], [row, col])       
+        # Maintain max distance for part 2 of problem
+        max_dist = max(max_dist, calculate_distance([0, 0], [row, col]))
+
+    return calculate_distance([0, 0], [row, col]) if part == 1 else max_dist
 
 
 # Validate examples with unit tests
 def run_tests() -> None:
      # Test part 1
-    assert (min_steps(["ne", "ne", "ne"]) == 3)
-    assert (min_steps(["ne", "ne", "sw", "sw"]) == 0)
-    assert (min_steps(["ne", "ne", "s", "s"]) == 2)
-    assert (min_steps(["se", "sw", "se", "sw", "sw"]) == 3)
-
-    # Test part 2
-    # assert (min_steps(["ne", "ne", "ne"]) == 3)
+    assert (calculate_steps(["ne", "ne", "ne"], 1) == 3)
+    assert (calculate_steps(["ne", "ne", "sw", "sw"], 1) == 0)
+    assert (calculate_steps(["ne", "ne", "s", "s"], 1) == 2)
+    assert (calculate_steps(["se", "sw", "se", "sw", "sw"], 1) == 3)
 
 
 if __name__ == "__main__":
@@ -67,8 +69,9 @@ if __name__ == "__main__":
     
     path = read_file(filename=INPUT_FILE)
 
-    steps = min_steps(path=path)
+    min_steps = calculate_steps(path=path, part=1)
+    max_steps = calculate_steps(path=path, part=2)
 
-    print(f"min steps: {steps}")
+    print(f"min steps: {min_steps} ... max steps: {max_steps}")
 
 
