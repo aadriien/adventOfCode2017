@@ -83,7 +83,6 @@ def run_tests() -> None:
     assert (knot_hash("1,2,4") == "63960835bcdc130f0b66d7ff4f6a5a8e")
     
 
-
 if __name__ == "__main__":
     run_tests()
     
