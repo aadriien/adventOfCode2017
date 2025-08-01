@@ -57,7 +57,7 @@ def calculate_steps(path: list[str], part: int) -> int:
 
 # Validate examples with unit tests
 def run_tests() -> None:
-     # Test part 1
+    # Test part 1
     assert (calculate_steps(["ne", "ne", "ne"], 1) == 3)
     assert (calculate_steps(["ne", "ne", "sw", "sw"], 1) == 0)
     assert (calculate_steps(["ne", "ne", "s", "s"], 1) == 2)
