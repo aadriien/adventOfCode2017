@@ -48,6 +48,19 @@ def calculate_severity(layers: dict[int, int]) -> int:
     return severity
 
 
+def determine_delay(layers: dict[int, int]) -> int:
+    # Brute force: find earliest picosecond config where not caught
+    # IMPORTANT: layer 0 counts as caught even though 0 severity! 
+    delay = 0
+    while True:
+        if all(
+            not is_caught(depth + delay, rng) 
+            for depth, rng in layers.items()
+        ):
+            return delay
+        delay += 1
+
+
 # Validate examples with unit tests
 def run_tests() -> None:
     tc_input_1 = {
@@ -61,6 +74,7 @@ def run_tests() -> None:
     assert (calculate_severity(tc_input_1) == 24)
 
     # Test part 2
+    assert (determine_delay(tc_input_1) == 10)
 
 
 if __name__ == "__main__":
@@ -69,7 +83,8 @@ if __name__ == "__main__":
     layers = read_file(filename=INPUT_FILE)
 
     trip_severity = calculate_severity(layers=layers)
+    picosecond_delay = determine_delay(layers=layers)
 
-    print(f"trip severity: {trip_severity}")
+    print(f"trip severity: {trip_severity} ... picosecond delay: {picosecond_delay}")
 
 
