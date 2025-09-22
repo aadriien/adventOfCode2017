@@ -29,6 +29,23 @@ def get_next_val(steps: int) -> int:
     return buffer[idx + 1]
 
 
+# Part 2 of problem
+def get_val_after_50mil(steps: int) -> int:
+    REPEAT_TIMES = 50000001
+    final_res = None
+    current_pos = 0
+
+    for i in range(1, REPEAT_TIMES + 1):
+        # Track how many iterations completed for mod 
+        current_pos = ((current_pos + steps) % i) + 1
+
+        # We only care what happens after idx 0
+        if current_pos == 1:
+            final_res = i 
+
+    return final_res 
+
+
 # Validate examples with unit tests
 def run_tests() -> None:
     # Test part 1
@@ -41,7 +58,8 @@ if __name__ == "__main__":
     steps = read_file(filename=INPUT_FILE)
 
     next_val = get_next_val(steps=steps)
+    val_after_50mil = get_val_after_50mil(steps=steps)
 
-    print(f"next val: {next_val} ...")
+    print(f"next val: {next_val} ... fast spin val: {val_after_50mil}")
 
 
